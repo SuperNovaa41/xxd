@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #include "include/hex.h"
 
@@ -32,27 +31,26 @@ void convert_text_to_hex(hex_chunk_t* chunk)
 	}
 }
 
-// TODO: clean up the text formatting to not print it every time
-void display_hex_chunk(hex_chunk_t* chunk)
+void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
 	int i, j;
 
-	printf("%08x: \x1b[32m", chunk->line * 16);
+	fprintf(stream, "%08x: \x1b[32m", chunk->line * 16);
 	for (i = 0; i < HEX_LINE_LEN; i += 4) {
 		for (j = 0; j < 4; j += 2) {
 			if (((chunk->hex + i) + j)[0] == '0' && ((chunk->hex + i) + j)[1] == 'a')
-				printf("\x1b[33m%2.2s\x1b[32m", chunk->hex + i + j);
+				fprintf(stream, "\x1b[33m%2.2s\x1b[32m", chunk->hex + i + j);
 			else
-				printf("%2.2s", chunk->hex + i + j);
+				fprintf(stream, "%2.2s", chunk->hex + i + j);
 		}
-		printf(" ");
+		fprintf(stream, " ");
 	}
 
 	for (i = 0; i < TEXT_LINE_LEN; i++) {
 		if (chunk->text[i] == '\n' || chunk->text[i] == EOF)
-			printf("\x1b[33m.\x1b[32m");
+			fprintf(stream, "\x1b[33m.\x1b[32m");
 		else
-			printf("%c", chunk->text[i]);
+			fprintf(stream, "%c", chunk->text[i]);
 	}
-	puts("\x1b[0m");
+	fprintf(stream, "\x1b[0m\n");
 }

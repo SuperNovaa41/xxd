@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #ifndef HEX_H
 #define HEX_H
 
@@ -13,6 +15,6 @@ typedef struct {
 void free_hex_chunk(hex_chunk_t* chunk);
 void add_text_to_chunk(char* src, char** dst);
 void convert_text_to_hex(hex_chunk_t* chunk);
-void display_hex_chunk(hex_chunk_t* chunk);
+void display_hex_chunk(hex_chunk_t* chunk, FILE* stream);
 
 #endif
