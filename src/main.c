@@ -6,6 +6,31 @@
 #include "include/hex.h"
 #include "include/file.h"
 
+struct flags {
+	bool autoskip; // should we condense null lines into *
+	bool binary; // do binary dump instead of hex
+	uint cols; // choose the amount of columns to display (default 16)
+	
+	uint octets; // number of octets per line (default 2)
+	int len; // max len to stop at
+	bool uppercase; // do uppercase hex chars
+	bool decimaloffset; // do decimal offset instead of hex
+};
+
+// TODO: implement flags and stuff
+
+void init_flags(struct flags* flags)
+{
+	flags->autoskip = false;
+	flags->binary = false;
+	flags->cols = 16;
+	flags->octets = 2;
+	flags->len = -1; // -1 means til EOF
+	flags->uppercase = false;
+	flags->decimaloffset = false;
+
+}
+
 int get_hex_lines(int len)
 {
 	int out;
