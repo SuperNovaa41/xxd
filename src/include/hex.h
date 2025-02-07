@@ -26,7 +26,7 @@ struct flags {
 	uint octets; // number of octets per line (default 2) // done
 	int len; // max len to stop at //done 
 	bool uppercase; // do uppercase hex chars // done
-	bool decimaloffset; // do decimal offset instead of hex
+	bool decimaloffset; // do decimal offset instead of hex // done
 };
 
 // TODO: implement flags and stuff

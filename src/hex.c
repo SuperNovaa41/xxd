@@ -12,10 +12,10 @@ void init_flags(struct flags* flags)
 	flags->autoskip = false;
 	flags->binary = false;
 	flags->cols = 16;
-	flags->octets = 4;
+	flags->octets = 2;
 	flags->len = -1; // -1 means til EOF
 	flags->uppercase = false;
-	flags->decimaloffset = false;
+	flags->decimaloffset = true;
 
 }
 
@@ -51,8 +51,12 @@ void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
 	uint i, j;
 	bool newline;
+	if (flags.decimaloffset)
+		fprintf(stream, "%08d", chunk->line * flags.cols);
+	else
+	 	fprintf(stream, "%08x", chunk->line * flags.cols);
+	fprintf(stream,  ": %s", GREEN_TEXT_STR);
 
-	fprintf(stream, "%08x: %s", chunk->line * flags.cols, GREEN_TEXT_STR);
 	newline = false;
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
 		for (j = 0; j < (flags.octets * 2); j += 2) {
@@ -60,7 +64,8 @@ void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 					((chunk->hex + i) + j)[1] == 'a')
 				newline = true;
 				
-			fprintf(stream, "%s%2.2s%s", (newline ? YELLOW_TEXT_STR : ""), chunk->hex + i + j, (newline ? GREEN_TEXT_STR : ""));
+			fprintf(stream, "%s%2.2s%s", (newline ? YELLOW_TEXT_STR : ""),
+					chunk->hex + i + j, (newline ? GREEN_TEXT_STR : ""));
 
 		}
 		fprintf(stream, " ");
