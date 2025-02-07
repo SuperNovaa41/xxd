@@ -63,7 +63,7 @@ void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
 		for (j = 0; j < (flags.octets * 2); j += 2) {
 			if (((chunk->hex + i) + j)[0] == '0' &&
-					((chunk->hex + i) + j)[1] == 'a')
+					((((chunk->hex + i) + j)[1] == 'a') || (((chunk->hex + i) + j)[1] == 'A')))
 				newline = true;
 				
 			fprintf(stream, "%s%2.2s%s", (newline ? YELLOW_TEXT_STR : ""),
