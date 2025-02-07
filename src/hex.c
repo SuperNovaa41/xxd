@@ -9,8 +9,9 @@ extern struct flags flags;
 
 void init_flags(struct flags* flags)
 {
-	flags->autoskip = false;
-	flags->binary = false;
+	flags->files[0] = NULL;
+	flags->files[1] = NULL;	
+
 	flags->cols = 16;
 	flags->octets = 2;
 	flags->len = -1; // -1 means til EOF
@@ -51,6 +52,7 @@ void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
 	uint i, j;
 	bool newline;
+
 	if (flags.decimaloffset)
 		fprintf(stream, "%08d", chunk->line * flags.cols);
 	else

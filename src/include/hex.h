@@ -19,8 +19,7 @@ typedef struct {
 } hex_chunk_t;
 
 struct flags {
-	bool autoskip; // should we condense null lines into *
-	bool binary; // do binary dump instead of hex
+	char* files[2];
 	uint cols; // choose the amount of columns to display (default 16) // done
 	
 	uint octets; // number of octets per line (default 2) // done
