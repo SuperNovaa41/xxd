@@ -11,8 +11,8 @@ void init_flags(struct flags* flags)
 {
 	flags->autoskip = false;
 	flags->binary = false;
-	flags->cols = 4;
-	flags->octets = 2;
+	flags->cols = 16;
+	flags->octets = 4;
 	flags->len = -1; // -1 means til EOF
 	flags->uppercase = false;
 	flags->decimaloffset = false;
@@ -52,8 +52,8 @@ void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 	uint i, j;
 
 	fprintf(stream, "%08x: \x1b[32m", chunk->line * flags.cols);
-	for (i = 0; i < (flags.cols * 2); i += 4) {
-		for (j = 0; j < 4; j += 2) {
+	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
+		for (j = 0; j < (flags.octets * 2); j += 2) {
 			if (((chunk->hex + i) + j)[0] == '0' && ((chunk->hex + i) + j)[1] == 'a')
 				fprintf(stream, "\x1b[33m%2.2s\x1b[32m", chunk->hex + i + j);
 			else
