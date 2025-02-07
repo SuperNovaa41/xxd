@@ -7,8 +7,7 @@
 
 extern struct flags flags;
 
-void init_flags(struct flags* flags)
-{
+void init_flags(struct flags* flags) {
 	flags->files[0] = NULL;
 	flags->files[1] = NULL;	
 
@@ -31,7 +30,8 @@ void add_text_to_chunk(char* src, char** dst)
 	*dst = malloc(sizeof(char) * (flags.cols + 1));
 
 	strncpy(*dst, src, flags.cols);
-	(*dst)[TEXT_LINE_LEN] = '\0';
+
+	(*dst)[flags.cols] = '\0';
 }
 
 void convert_text_to_hex(hex_chunk_t* chunk)

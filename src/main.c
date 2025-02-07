@@ -96,9 +96,9 @@ int main(int argc, char* argv[])
 
 	hex_chunk_t* lines = malloc(sizeof(hex_chunk_t) * hex_lines);
 
+
 	for (i = 0; i < hex_lines; i++) {
 		lines[i].line = i;
-	
 		add_text_to_chunk(file_content + (i * (flags.cols)), &(lines[i].text));
 		convert_text_to_hex(&lines[i]);
 	}
