@@ -1,8 +1,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "include/hex.h"
+
+extern struct flags flags;
+
+void init_flags(struct flags* flags)
+{
+	flags->autoskip = false;
+	flags->binary = false;
+	flags->cols = 16;
+	flags->octets = 2;
+	flags->len = -1; // -1 means til EOF
+	flags->uppercase = false;
+	flags->decimaloffset = false;
+
+}
 
 void free_hex_chunk(hex_chunk_t* chunk)
 {
@@ -22,12 +37,13 @@ void convert_text_to_hex(hex_chunk_t* chunk)
 {
 	int i, j;
 	chunk->hex = malloc(sizeof(char) * (HEX_LINE_LEN + 1));
-
+	
 	for (i = 0, j = 0; i < HEX_LINE_LEN; i += 2, j += 1) {
-		if (chunk->text[j] == '\0')
+		if (chunk->text[j] == '\0') {
 			snprintf(chunk->hex + i, 3, "  ");
-		else
-			snprintf(chunk->hex + i, 3, "%02x", chunk->text[j]);
+		} else {
+			snprintf(chunk->hex + i, 3, flags.uppercase ? "%02X ": "%02x", chunk->text[j]);
+		}
 	}
 }
 
