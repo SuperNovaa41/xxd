@@ -10,7 +10,7 @@
 const char* argp_program_version = "xxd 0.1";
 const char* argp_program_bug_address = "supernovaa41@gmx.com";
 static char doc[] = "Creates a hex dump of the given file.";
-static char args_doc[] = "[INFILE] ([OUTFILE])";
+static char args_doc[] = "INFILE [OUTFILE]";
 static struct argp_option options[] = {
 	{"cols", 'c', "cols", 0, "format <cols> octets per line. Default 16.", 0},
 	{"octets", 'g', "bytes", 0, "number of octets per group in normal output. Default 2.", 0},
