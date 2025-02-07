@@ -16,7 +16,7 @@ void init_flags(struct flags* flags)
 	flags->octets = 2;
 	flags->len = -1; // -1 means til EOF
 	flags->uppercase = false;
-	flags->decimaloffset = true;
+	flags->decimaloffset = false;
 
 }
 
