@@ -25,6 +25,7 @@ int main(int argc, char* argv[])
 	FILE* stream;
 	bool outfile;
 	int hex_lines, i;
+	size_t filesize;
 
 	init_flags(&flags);
 
@@ -43,7 +44,10 @@ int main(int argc, char* argv[])
 
 
 	read_file_to_buf(argv[1], &file_content);
-	hex_lines = get_hex_lines(strlen(file_content));
+
+	filesize = (flags.len == -1) ? strlen(file_content) : flags.len;
+	
+	hex_lines = get_hex_lines(filesize);
 
 	hex_chunk_t* lines = malloc(sizeof(hex_chunk_t) * hex_lines);
 
