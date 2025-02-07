@@ -11,7 +11,7 @@ void init_flags(struct flags* flags)
 {
 	flags->autoskip = false;
 	flags->binary = false;
-	flags->cols = 16;
+	flags->cols = 4;
 	flags->octets = 2;
 	flags->len = -1; // -1 means til EOF
 	flags->uppercase = false;
@@ -27,18 +27,18 @@ void free_hex_chunk(hex_chunk_t* chunk)
 
 void add_text_to_chunk(char* src, char** dst)
 {
-	*dst = malloc(sizeof(char) * (TEXT_LINE_LEN + 1));
+	*dst = malloc(sizeof(char) * (flags.cols + 1));
 
-	strncpy(*dst, src, 16);
+	strncpy(*dst, src, flags.cols);
 	(*dst)[TEXT_LINE_LEN] = '\0';
 }
 
 void convert_text_to_hex(hex_chunk_t* chunk)
 {
-	int i, j;
-	chunk->hex = malloc(sizeof(char) * (HEX_LINE_LEN + 1));
+	uint i, j;
+	chunk->hex = malloc(sizeof(char) * ((flags.cols * 2) + 1));
 	
-	for (i = 0, j = 0; i < HEX_LINE_LEN; i += 2, j += 1) {
+	for (i = 0, j = 0; i < (flags.cols * 2); i += 2, j += 1) {
 		if (chunk->text[j] == '\0') {
 			snprintf(chunk->hex + i, 3, "  ");
 		} else {
@@ -49,10 +49,10 @@ void convert_text_to_hex(hex_chunk_t* chunk)
 
 void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
-	int i, j;
+	uint i, j;
 
-	fprintf(stream, "%08x: \x1b[32m", chunk->line * 16);
-	for (i = 0; i < HEX_LINE_LEN; i += 4) {
+	fprintf(stream, "%08x: \x1b[32m", chunk->line * flags.cols);
+	for (i = 0; i < (flags.cols * 2); i += 4) {
 		for (j = 0; j < 4; j += 2) {
 			if (((chunk->hex + i) + j)[0] == '0' && ((chunk->hex + i) + j)[1] == 'a')
 				fprintf(stream, "\x1b[33m%2.2s\x1b[32m", chunk->hex + i + j);
@@ -62,7 +62,7 @@ void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 		fprintf(stream, " ");
 	}
 
-	for (i = 0; i < TEXT_LINE_LEN; i++) {
+	for (i = 0; i < flags.cols; i++) {
 		if (chunk->text[i] == '\n' || chunk->text[i] == EOF)
 			fprintf(stream, "\x1b[33m.\x1b[32m");
 		else

@@ -6,18 +6,18 @@
 #include "include/hex.h"
 #include "include/file.h"
 
+struct flags flags;
+
 int get_hex_lines(int len)
 {
 	int out;
 
-	out = len / 16;
-	if (len % 16 != 0) // if we have a less than a full line remaining
+	out = len / (flags.cols);
+	if (len % (flags.cols) != 0) // if we have a less than a full line remaining
 		out++;
 
 	return out;
 }
-
-struct flags flags;
 
 int main(int argc, char* argv[])
 {
@@ -42,7 +42,6 @@ int main(int argc, char* argv[])
 		outfile = true;
 	}
 
-
 	read_file_to_buf(argv[1], &file_content);
 
 	filesize = (flags.len == -1) ? strlen(file_content) : flags.len;
@@ -54,7 +53,7 @@ int main(int argc, char* argv[])
 	for (i = 0; i < hex_lines; i++) {
 		lines[i].line = i;
 	
-		add_text_to_chunk(file_content + (i * 16), &(lines[i].text));
+		add_text_to_chunk(file_content + (i * (flags.cols)), &(lines[i].text));
 		convert_text_to_hex(&lines[i]);
 	}
 
