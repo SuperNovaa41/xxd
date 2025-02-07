@@ -8,6 +8,10 @@
 #define TEXT_LINE_LEN 16
 #define HEX_LINE_LEN 32
 
+#define GREEN_TEXT_STR "\x1b[32m"
+#define YELLOW_TEXT_STR "\x1b[33m"
+#define RESET_TEXT_STR "\x1b[0m\n"
+
 typedef struct {
 	int line;
 	char* text;
@@ -17,11 +21,11 @@ typedef struct {
 struct flags {
 	bool autoskip; // should we condense null lines into *
 	bool binary; // do binary dump instead of hex
-	uint cols; // choose the amount of columns to display (default 16)
+	uint cols; // choose the amount of columns to display (default 16) // done
 	
-	uint octets; // number of octets per line (default 2)
-	int len; // max len to stop at
-	bool uppercase; // do uppercase hex chars
+	uint octets; // number of octets per line (default 2) // done
+	int len; // max len to stop at //done 
+	bool uppercase; // do uppercase hex chars // done
 	bool decimaloffset; // do decimal offset instead of hex
 };
 

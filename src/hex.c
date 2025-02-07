@@ -50,23 +50,30 @@ void convert_text_to_hex(hex_chunk_t* chunk)
 void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
 	uint i, j;
+	bool newline;
 
-	fprintf(stream, "%08x: \x1b[32m", chunk->line * flags.cols);
+	fprintf(stream, "%08x: %s", chunk->line * flags.cols, GREEN_TEXT_STR);
+	newline = false;
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
 		for (j = 0; j < (flags.octets * 2); j += 2) {
-			if (((chunk->hex + i) + j)[0] == '0' && ((chunk->hex + i) + j)[1] == 'a')
-				fprintf(stream, "\x1b[33m%2.2s\x1b[32m", chunk->hex + i + j);
-			else
-				fprintf(stream, "%2.2s", chunk->hex + i + j);
+			if (((chunk->hex + i) + j)[0] == '0' &&
+					((chunk->hex + i) + j)[1] == 'a')
+				newline = true;
+				
+			fprintf(stream, "%s%2.2s%s", (newline ? YELLOW_TEXT_STR : ""), chunk->hex + i + j, (newline ? GREEN_TEXT_STR : ""));
+
 		}
 		fprintf(stream, " ");
+		newline = false;
 	}
 
 	for (i = 0; i < flags.cols; i++) {
 		if (chunk->text[i] == '\n' || chunk->text[i] == EOF)
-			fprintf(stream, "\x1b[33m.\x1b[32m");
-		else
-			fprintf(stream, "%c", chunk->text[i]);
+			newline = true;
+
+		fprintf(stream, "%s%c%s", (newline ? YELLOW_TEXT_STR : ""),
+				(newline ? '.' : chunk->text[i]), (newline ? GREEN_TEXT_STR : ""));
+		newline = false;
 	}
-	fprintf(stream, "\x1b[0m\n");
+	fprintf(stream, RESET_TEXT_STR);
 }
