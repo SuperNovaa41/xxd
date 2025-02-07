@@ -74,6 +74,8 @@ void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 		newline = false;
 	}
 
+	fprintf(stream, " ");
+
 	for (i = 0; i < flags.cols; i++) {
 		if (chunk->text[i] == '\n' || chunk->text[i] == EOF)
 			newline = true;
