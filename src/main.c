@@ -57,7 +57,7 @@ static struct argp argp = {options, parse_opt, args_doc, doc, 0, 0, 0};
 
 struct flags flags;
 
-int get_hex_lines(int len)
+static int get_hex_lines(int len)
 {
 	int out;
 
@@ -68,7 +68,7 @@ int get_hex_lines(int len)
 	return out;
 }
 
-void do_text_parse(hex_chunk_t** lines, bool interactive)
+static void do_text_parse(hex_chunk_t** lines, bool interactive)
 {
 	char* file_content = NULL;
 	int hex_lines, i;
@@ -97,7 +97,7 @@ void do_text_parse(hex_chunk_t** lines, bool interactive)
 	free(file_content);
 }
 
-void do_display(hex_chunk_t** lines)
+static void do_display(hex_chunk_t** lines)
 {
 	int i;
 	bool fileout = false;
