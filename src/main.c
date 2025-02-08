@@ -43,10 +43,9 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state)
 			if (state->arg_num >= 2)
 				argp_usage(state);
 			flags->files[state->arg_num] = arg;
+			flags->file_in = true;
 			break;
 		case ARGP_KEY_END:
-			if (state->arg_num < 1)
-				argp_usage(state);
 			break;
 		default:
 			return ARGP_ERR_UNKNOWN;
@@ -69,48 +68,68 @@ int get_hex_lines(int len)
 	return out;
 }
 
-int main(int argc, char* argv[])
+void do_file_read(hex_chunk_t** lines)
 {
 	char* file_content;
-	FILE* stream;
-	bool outfile;
 	int hex_lines, i;
 	size_t filesize;
-
-	init_flags(&flags);
-
-	argp_parse(&argp, argc, argv, 0, 0, &flags);
 
 	read_file_to_buf(flags.files[0], &file_content);
 	filesize = (flags.len == -1) ? strlen(file_content) : flags.len;
 	hex_lines = get_hex_lines(filesize);
 
-	outfile = false;
-	if (flags.files[1] != NULL) {
-		stream = fopen(flags.files[1], "w");
-		outfile = true;
-	} else {
-	 	stream = stdout;
-	}
-
-
-	hex_chunk_t* lines = malloc(sizeof(hex_chunk_t) * hex_lines);
+	*lines = malloc(sizeof(hex_chunk_t) * (hex_lines + 1));	
 
 
 	for (i = 0; i < hex_lines; i++) {
-		lines[i].line = i;
-		add_text_to_chunk(file_content + (i * (flags.cols)), &(lines[i].text));
-		convert_text_to_hex(&lines[i]);
+		(*lines)[i].line = i;
+		add_text_to_chunk(file_content + (i * (flags.cols)), &((*lines)[i].text));
+		convert_text_to_hex(&(*lines)[i]);
+	} 
+	
+	(*lines)[hex_lines].line = -1;
+	free(file_content);
+}
+
+void do_display(hex_chunk_t** lines)
+{
+	int i;
+	bool fileout = false;
+	FILE* stream = stdout;
+
+	if (flags.files[1] != NULL) {
+		stream = fopen(flags.files[1], "w");
+		fileout = true;
 	}
 
-	for (i = 0; i < hex_lines; i++)
-		display_hex_chunk(&(lines[i]), stream);
+	i = 0;
+	while ((*lines)[i].line != -1)
+		display_hex_chunk(&((*lines)[i++]), stream);
 
-	if (outfile)
+	if (fileout)
 		fclose(stream);
-	free(file_content);	
-	for (i = 0; i < hex_lines; i++)
-		free_hex_chunk(&(lines[i]));
+
+}
+
+int main(int argc, char* argv[])
+{
+	int i;
+	hex_chunk_t* lines;
+
+	init_flags(&flags);
+
+	argp_parse(&argp, argc, argv, 0, 0, &flags);
+	flags.files[0] = "main.c";
+
+	do_file_read(&lines);
+
+	do_display(&lines);
+
+	i = 0;
+	while (lines[i].line != -1)
+		free_hex_chunk(&(lines[i++]));
+	free_hex_chunk(&(lines[i]));
+
 	free(lines);
 
 

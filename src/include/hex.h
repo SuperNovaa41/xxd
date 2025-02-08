@@ -19,6 +19,7 @@ typedef struct {
 } hex_chunk_t;
 
 struct flags {
+	bool file_in;
 	char* files[2];
 	uint cols; // choose the amount of columns to display (default 16) // done
 	

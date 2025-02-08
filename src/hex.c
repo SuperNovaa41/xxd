@@ -8,6 +8,7 @@
 extern struct flags flags;
 
 void init_flags(struct flags* flags) {
+	flags->file_in = false;
 	flags->files[0] = NULL;
 	flags->files[1] = NULL;	
 

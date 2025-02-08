@@ -2,10 +2,14 @@ TARGET=xxd
 CC=gcc
 
 OBJ = main.o hex.o file.o
+FILES = main.c hex.c file.c
+
+DEBUG:
+	gcc -g $(FILES)
 
 $(TARGET): $(OBJ)
 	mkdir -p ../build
-	$(CC) -Wall -g -o $(TARGET) $(OBJ) -g
+	$(CC) -g -o $(TARGET) $(OBJ)
 	mv $(TARGET) ../build/
 
 main.o: include/hex.h include/file.h
