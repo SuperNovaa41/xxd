@@ -68,13 +68,19 @@ int get_hex_lines(int len)
 	return out;
 }
 
-void do_file_read(hex_chunk_t** lines)
+void do_text_parse(hex_chunk_t** lines, bool interactive)
 {
-	char* file_content;
+	char* file_content = NULL;
 	int hex_lines, i;
-	size_t filesize;
+	size_t filesize, max_len;
+	
+	if (interactive) {
+		max_len = INT_MAX;
+		getdelim(&file_content, &max_len, EOF, stdin);
+	} else {
+		read_file_to_buf(flags.files[0], &file_content);
+	}
 
-	read_file_to_buf(flags.files[0], &file_content);
 	filesize = (flags.len == -1) ? strlen(file_content) : flags.len;
 	hex_lines = get_hex_lines(filesize);
 
@@ -95,6 +101,7 @@ void do_display(hex_chunk_t** lines)
 {
 	int i;
 	bool fileout = false;
+
 	FILE* stream = stdout;
 
 	if (flags.files[1] != NULL) {
@@ -119,9 +126,9 @@ int main(int argc, char* argv[])
 	init_flags(&flags);
 
 	argp_parse(&argp, argc, argv, 0, 0, &flags);
-	flags.files[0] = "main.c";
 
-	do_file_read(&lines);
+	
+	do_text_parse(&lines, (flags.files[0] == NULL ? true : false));
 
 	do_display(&lines);
 

@@ -4,13 +4,13 @@ CC=gcc
 OBJ = main.o hex.o file.o
 FILES = main.c hex.c file.c
 
-DEBUG:
-	gcc -g $(FILES)
-
 $(TARGET): $(OBJ)
 	mkdir -p ../build
 	$(CC) -g -o $(TARGET) $(OBJ)
 	mv $(TARGET) ../build/
+
+debug:
+	gcc -g $(FILES)
 
 main.o: include/hex.h include/file.h
 hex.o: include/hex.h
