@@ -22,7 +22,10 @@ void init_flags(struct flags* flags)
 	flags->decimaloffset = false;
 
 	flags->postscript = false;
+
 	flags->c_style = false;
+	flags->c_filename = NULL;
+	flags->cap_c_style = false;
 }
 
 void init_cols(struct flags* flags)
@@ -132,12 +135,31 @@ static void standard_output(char** text, FILE* stream)
 
 }
 
+static void c_output(char** text, FILE* stream)
+{
+	uint i;
+
+	printf("\t");
+
+	printf("0x");
+	write_octet((*text)[0], (*text)[1], stream);
+	for (i = 2; i < (flags.cols * 2); i += 2) {
+		if ((*text)[i] == ' ')
+			continue;
+		printf(", 0x");
+		write_octet((*text)[i], (*text)[i + 1], stream);
+	}
+}
+
 void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
 	if (!flags.postscript && !flags.c_style)
 		write_offset(chunk->line * flags.cols, stream);
 
-	standard_output(&(chunk->hex), stream);
+	if (flags.c_style)
+		c_output(&(chunk->hex), stream);
+	else
+		standard_output(&(chunk->hex), stream);
 
 	if (!flags.postscript && !flags.c_style)
 		write_text(&(chunk->text), stream);

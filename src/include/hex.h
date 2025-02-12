@@ -33,7 +33,10 @@ struct flags {
 	bool decimaloffset; // do decimal offset instead of hex // done
 	
 	bool postscript; // post in plain postscript style
+	
 	bool c_style; // output in C include file style
+	char* c_filename;
+	bool cap_c_style; // capitalize variable names in c style
 };
 
 // TODO: implement flags and stuff
