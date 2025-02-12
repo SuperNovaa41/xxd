@@ -146,11 +146,19 @@ static void write_octet(char a, char b, FILE* stream)
 			a, b, (newline ? green_str : ""));
 }
 
-static void display_octet(char* text, FILE* stream)
+static void display_octets(char* text, FILE* stream)
 {
 	uint i;
-	for (i = 0; i < (flags.octets * 2); i += 2)
-		write_octet(((text) + i)[0], ((text) + i)[1], stream);
+	for (i = 0; i < (flags.octets * 2); i += 2) {
+		if (flags.littleendian) {
+			write_octet((text + (flags.octets * 2) - i - 2)[0],
+					(text + (flags.octets * 2) - i - 2)[1], stream);
+		} else {
+			write_octet((text + i)[0], (text + i)[1], stream);
+		}
+	}
+	
+
 }
 
 static void standard_output(char** text, FILE* stream)
@@ -158,7 +166,7 @@ static void standard_output(char** text, FILE* stream)
 	uint i;
 
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
-		display_octet(((*text) + i), stream);
+		display_octets(((*text) + i), stream);
 
 		if (!flags.postscript)
 			fprintf(stream, " ");
