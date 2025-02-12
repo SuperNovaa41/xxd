@@ -90,7 +90,7 @@ static void write_offset(int num, FILE* stream)
 
 static void write_text(char** text, FILE* stream)
 {
-	size_t i;
+	uint i;
 	bool newline;
 
 	fprintf(stream, " ");
@@ -116,24 +116,28 @@ static void write_octet(char a, char b, FILE* stream)
 			a, b, (newline ? green_str : ""));
 }
 
-
-void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
+static void standard_output(char** text, FILE* stream)
 {
 	uint i, j;
-	bool newline;
-
-
-	if (!flags.postscript && !flags.c_style)
-		write_offset(chunk->line * flags.cols, stream);
 
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
 		for (j = 0; j < (flags.octets * 2); j += 2)
-			write_octet((chunk->hex + i + j)[0], (chunk->hex + i + j)[1], stream);
+			write_octet(((*text) + i + j)[0], ((*text) + i + j)[1], stream);
 		fprintf(stream, " ");
 	}
 
-	
-	write_text(&(chunk->text), stream);
+}
+
+
+void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
+{
+	if (!flags.postscript && !flags.c_style)
+		write_offset(chunk->line * flags.cols, stream);
+
+	standard_output(&(chunk->hex), stream);
+
+	if (!flags.postscript && !flags.c_style)
+		write_text(&(chunk->text), stream);
 
 
 	fprintf(stream, RESET_TEXT_STR);
