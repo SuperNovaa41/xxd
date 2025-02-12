@@ -92,15 +92,18 @@ static void write_text(char** text, FILE* stream)
 {
 	uint i;
 	bool newline;
+	const char* yellow_str = (flags.coloured) ? YELLOW_TEXT_STR : "";
+	const char* green_str = (flags.coloured) ? GREEN_TEXT_STR : "";
+
 
 	fprintf(stream, " ");
 
 	for (i = 0; i < flags.cols; i++) {
 		newline = is_newline(false, (*text)[i]);
 
-		fprintf(stream, "%s%c%s", (newline ? YELLOW_TEXT_STR : ""),
+		fprintf(stream, "%s%c%s", (newline ? yellow_str : ""),
 				(newline ? '.' : (*text)[i]), 
-				(newline ? GREEN_TEXT_STR : ""));
+				(newline ? green_str : ""));
 	}
 }
 
