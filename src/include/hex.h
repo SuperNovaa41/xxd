@@ -21,17 +21,25 @@ typedef struct {
 struct flags {
 	bool file_in;
 	char* files[2];
+
+	bool coloured;
+	
 	uint cols; // choose the amount of columns to display (default 16) // done
+	bool customcols;
 	
 	uint octets; // number of octets per line (default 2) // done
 	int len; // max len to stop at //done 
 	bool uppercase; // do uppercase hex chars // done
 	bool decimaloffset; // do decimal offset instead of hex // done
+	
+	bool postscript; // post in plain postscript style
+	bool c_style; // output in C include file style
 };
 
 // TODO: implement flags and stuff
 
 void init_flags(struct flags* flags);
+void init_cols(struct flags* flags);
 
 void free_hex_chunk(hex_chunk_t* chunk);
 void add_text_to_chunk(char* src, char** dst);

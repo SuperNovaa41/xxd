@@ -26,6 +26,7 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state)
 	switch(key) {
 		case 'c':
 			flags->cols = atoi(arg);
+			flags->customcols = true;
 			break;
 		case 'g':
 			flags->octets = atoi(arg);
@@ -127,6 +128,7 @@ int main(int argc, char* argv[])
 
 	argp_parse(&argp, argc, argv, 0, 0, &flags);
 
+	init_cols(&flags);
 	
 	do_text_parse(&lines, (flags.files[0] == NULL ? true : false));
 

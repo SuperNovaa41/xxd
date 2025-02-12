@@ -7,17 +7,35 @@
 
 extern struct flags flags;
 
-void init_flags(struct flags* flags) {
+void init_flags(struct flags* flags)
+{
 	flags->file_in = false;
 	flags->files[0] = NULL;
 	flags->files[1] = NULL;	
 
-	flags->cols = 16;
+	flags->customcols = false;
+	flags->coloured = true;
+
 	flags->octets = 2;
 	flags->len = -1; // -1 means til EOF
 	flags->uppercase = false;
 	flags->decimaloffset = false;
 
+	flags->postscript = false;
+	flags->c_style = false;
+}
+
+void init_cols(struct flags* flags)
+{
+	if (flags->customcols)
+		return;
+
+	if (flags->postscript == true)
+		flags->cols = 30;
+	else if (flags->c_style == true)
+		flags->cols = 12;
+	else
+		flags->cols = 16;
 }
 
 void free_hex_chunk(hex_chunk_t* chunk)
@@ -49,41 +67,74 @@ void convert_text_to_hex(hex_chunk_t* chunk)
 	}
 }
 
+static bool is_newline(bool hex, char c)
+{
+	if (hex) {
+		if (c == 'a' || c == 'A')
+			return true;
+	} else {
+		if (c == '\n' || c == EOF)
+			return true;
+	}
+	return false;
+}
+
+static void write_offset(int num, FILE* stream)
+{
+	if (flags.decimaloffset)
+		fprintf(stream, "%08d", num);
+	else
+	 	fprintf(stream, "%08x", num);
+	fprintf(stream, ": %s", GREEN_TEXT_STR);
+}
+
+static void write_text(char** text, FILE* stream)
+{
+	size_t i;
+	bool newline;
+
+	fprintf(stream, " ");
+
+	for (i = 0; i < flags.cols; i++) {
+		newline = is_newline(false, (*text)[i]);
+
+		fprintf(stream, "%s%c%s", (newline ? YELLOW_TEXT_STR : ""),
+				(newline ? '.' : (*text)[i]), 
+				(newline ? GREEN_TEXT_STR : ""));
+	}
+}
+
+static void write_octet(char a, char b, FILE* stream)
+{
+	bool newline;
+	const char* yellow_str = (flags.coloured) ? YELLOW_TEXT_STR : "";
+	const char* green_str = (flags.coloured) ? GREEN_TEXT_STR : "";
+
+	newline = (a == '0') && is_newline(true, b);
+	
+	fprintf(stream, "%s%c%c%s", (newline ? yellow_str : ""),
+			a, b, (newline ? green_str : ""));
+}
+
+
 void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
 	uint i, j;
 	bool newline;
 
-	if (flags.decimaloffset)
-		fprintf(stream, "%08d", chunk->line * flags.cols);
-	else
-	 	fprintf(stream, "%08x", chunk->line * flags.cols);
-	fprintf(stream,  ": %s", GREEN_TEXT_STR);
 
-	newline = false;
+	if (!flags.postscript && !flags.c_style)
+		write_offset(chunk->line * flags.cols, stream);
+
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
-		for (j = 0; j < (flags.octets * 2); j += 2) {
-			if (((chunk->hex + i) + j)[0] == '0' &&
-					((((chunk->hex + i) + j)[1] == 'a') || (((chunk->hex + i) + j)[1] == 'A')))
-				newline = true;
-				
-			fprintf(stream, "%s%2.2s%s", (newline ? YELLOW_TEXT_STR : ""),
-					chunk->hex + i + j, (newline ? GREEN_TEXT_STR : ""));
-
-		}
+		for (j = 0; j < (flags.octets * 2); j += 2)
+			write_octet((chunk->hex + i + j)[0], (chunk->hex + i + j)[1], stream);
 		fprintf(stream, " ");
-		newline = false;
 	}
 
-	fprintf(stream, " ");
+	
+	write_text(&(chunk->text), stream);
 
-	for (i = 0; i < flags.cols; i++) {
-		if (chunk->text[i] == '\n' || chunk->text[i] == EOF)
-			newline = true;
 
-		fprintf(stream, "%s%c%s", (newline ? YELLOW_TEXT_STR : ""),
-				(newline ? '.' : chunk->text[i]), (newline ? GREEN_TEXT_STR : ""));
-		newline = false;
-	}
 	fprintf(stream, RESET_TEXT_STR);
 }
