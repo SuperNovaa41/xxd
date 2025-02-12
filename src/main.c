@@ -17,6 +17,7 @@ static struct argp_option options[] = {
 	{"len", 'l', "len", 0, "stop after <len> octets.", 0},
 	{"uppercase", 'u', 0, 0, "use upper case hex letters.", 0},
 	{"decimaloffset", 'd', 0, 0, "show offset in decimal instead of hex.", 0},
+	{"ps", 'p', 0, 0, "output in postscript plain hexdump style.", 0},
 	{0}
 };
 
@@ -40,6 +41,9 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state)
 		case 'd':
 			flags->decimaloffset = true;
 			break;
+		case 'p':
+			flags->postscript = true;
+			flags->coloured = false;
 		case ARGP_KEY_ARG:
 			if (state->arg_num >= 2)
 				argp_usage(state);
@@ -137,10 +141,7 @@ int main(int argc, char* argv[])
 	i = 0;
 	while (lines[i].line != -1)
 		free_hex_chunk(&(lines[i++]));
-	free_hex_chunk(&(lines[i]));
-
 	free(lines);
-
 
 	return 0;
 }

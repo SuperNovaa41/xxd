@@ -11,6 +11,7 @@ $(TARGET): $(OBJ)
 
 debug:
 	gcc -g $(FILES)
+	mv a.out ../build/
 
 main.o: include/hex.h include/file.h
 hex.o: include/hex.h

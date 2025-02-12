@@ -85,7 +85,7 @@ static void write_offset(int num, FILE* stream)
 		fprintf(stream, "%08d", num);
 	else
 	 	fprintf(stream, "%08x", num);
-	fprintf(stream, ": %s", GREEN_TEXT_STR);
+	fprintf(stream, ": %s", (flags.coloured) ? GREEN_TEXT_STR : "");
 }
 
 static void write_text(char** text, FILE* stream)
@@ -123,11 +123,11 @@ static void standard_output(char** text, FILE* stream)
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
 		for (j = 0; j < (flags.octets * 2); j += 2)
 			write_octet(((*text) + i + j)[0], ((*text) + i + j)[1], stream);
-		fprintf(stream, " ");
+		if (!flags.postscript)
+			fprintf(stream, " ");
 	}
 
 }
-
 
 void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
