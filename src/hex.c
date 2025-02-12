@@ -17,6 +17,7 @@ void init_flags(struct flags* flags)
 	flags->coloured = true;
 
 	flags->offset = 0;
+	flags->seek = 0;
 
 	flags->littleendian = false;
 

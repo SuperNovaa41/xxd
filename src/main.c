@@ -24,6 +24,7 @@ static struct argp_option options[] = {
 	{0, 'n', "name", 0, "set the variable name used in C include output (-i).", 0},
 	{0, 'o', "off", 0, "add <off> to the displayed file position.", 0},
 	{0, 'e', 0, 0, "little-endian dump (incompatible with -ps,-i,-r).", 0},
+	{0, 's', "seek", 0, "start at <[+][-] seek> bytes abs. infile offset.", 0},
 	{0}
 };
 
@@ -46,7 +47,12 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state)
 			flags->customoctets = true;
 			break;
 		case 'o':
-			flags->offset = atoi(arg);
+			flags->offset += atoi(arg);
+			break;
+		case 's':
+			flags->seek = atoi(arg);
+			if (flags->seek >= 0)
+				flags->offset += atoi(arg);
 			break;
 		case 'e':
 			flags->littleendian = true;
@@ -110,6 +116,7 @@ static void do_text_parse(hex_chunk_t** lines, bool interactive)
 	char* file_content = NULL;
 	int hex_lines, i;
 	size_t filesize, max_len;
+	uint seek;
 	
 	if (interactive) {
 		max_len = INT_MAX;
@@ -118,7 +125,19 @@ static void do_text_parse(hex_chunk_t** lines, bool interactive)
 		read_file_to_buf(flags.files[0], &file_content);
 	}
 
-	filesize = (flags.len == -1) ? strlen(file_content) : flags.len;
+	if (flags.seek >= 0) {
+		if (flags.seek > strlen(file_content))
+			exit(EXIT_SUCCESS);
+		seek = flags.seek;
+	} else {
+		if ((flags.seek * -1) > strlen(file_content)) {
+			fprintf(stderr, "xxd: Sorry, cannot seek.\n");
+			exit(EXIT_FAILURE);
+		}
+		seek = (strlen(file_content) - flags.seek);
+	}
+
+	filesize = (flags.len == -1) ? strlen(file_content + seek) : flags.len;
 
 	flags.len = filesize;
 
@@ -129,7 +148,7 @@ static void do_text_parse(hex_chunk_t** lines, bool interactive)
 
 	for (i = 0; i < hex_lines; i++) {
 		(*lines)[i].line = i;
-		add_text_to_chunk(file_content + (i * (flags.cols)), &((*lines)[i].text));
+		add_text_to_chunk((file_content + seek) + (i * (flags.cols)), &((*lines)[i].text));
 		convert_text_to_hex(&(*lines)[i]);
 	} 
 	
