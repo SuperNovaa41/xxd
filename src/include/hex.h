@@ -27,9 +27,13 @@ struct flags {
 	uint cols; // choose the amount of columns to display (default 16) // done
 	bool customcols;
 
+	bool littleendian;
+
 	uint offset;
 	
 	uint octets; // number of octets per line (default 2) // done
+	bool customoctets;	
+
 	int len; // max len to stop at //done 
 	bool uppercase; // do uppercase hex chars // done
 	bool decimaloffset; // do decimal offset instead of hex // done
@@ -44,7 +48,7 @@ struct flags {
 // TODO: implement flags and stuff
 
 void init_flags(struct flags* flags);
-void init_cols(struct flags* flags);
+void init_var_defaults(struct flags* flags);
 
 void free_hex_chunk(hex_chunk_t* chunk);
 void add_text_to_chunk(char* src, char** dst);

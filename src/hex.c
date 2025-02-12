@@ -18,7 +18,11 @@ void init_flags(struct flags* flags)
 
 	flags->offset = 0;
 
+	flags->littleendian = false;
+
 	flags->octets = 2;
+	flags->customoctets = false;
+
 	flags->len = -1; // -1 means til EOF
 	flags->uppercase = false;
 	flags->decimaloffset = false;
@@ -30,18 +34,36 @@ void init_flags(struct flags* flags)
 	flags->cap_c_style = false;
 }
 
-void init_cols(struct flags* flags)
+static void init_octets(struct flags* flags)
+{
+	if (flags->customoctets)
+		return;
+
+	if (flags->littleendian)
+		flags->octets = 4;
+	else
+	 	flags->octets = 2;;
+}
+
+static void init_cols(struct flags* flags)
 {
 	if (flags->customcols)
 		return;
 
-	if (flags->postscript == true)
+	if (flags->postscript)
 		flags->cols = 30;
-	else if (flags->c_style == true)
+	else if (flags->c_style)
 		flags->cols = 12;
 	else
 		flags->cols = 16;
 }
+
+void init_var_defaults(struct flags* flags)
+{
+	init_octets(flags);
+	init_cols(flags);
+}
+
 
 void free_hex_chunk(hex_chunk_t* chunk)
 {
@@ -124,13 +146,20 @@ static void write_octet(char a, char b, FILE* stream)
 			a, b, (newline ? green_str : ""));
 }
 
+static void display_octet(char* text, FILE* stream)
+{
+	uint i;
+	for (i = 0; i < (flags.octets * 2); i += 2)
+		write_octet(((text) + i)[0], ((text) + i)[1], stream);
+}
+
 static void standard_output(char** text, FILE* stream)
 {
-	uint i, j;
+	uint i;
 
 	for (i = 0; i < (flags.cols * 2); i += (flags.octets * 2)) {
-		for (j = 0; j < (flags.octets * 2); j += 2)
-			write_octet(((*text) + i + j)[0], ((*text) + i + j)[1], stream);
+		display_octet(((*text) + i), stream);
+
 		if (!flags.postscript)
 			fprintf(stream, " ");
 	}

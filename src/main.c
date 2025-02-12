@@ -23,6 +23,7 @@ static struct argp_option options[] = {
 	{0, 'C', 0, 0, "capitalize variable names in C include file style (-i).", 0},
 	{0, 'n', "name", 0, "set the variable name used in C include output (-i).", 0},
 	{0, 'o', "off", 0, "add <off> to the displayed file position.", 0},
+	{0, 'e', 0, 0, "little-endian dump (incompatible with -ps,-i,-r).", 0},
 	{0}
 };
 
@@ -42,9 +43,13 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state)
 			break;
 		case 'g':
 			flags->octets = atoi(arg);
+			flags->customoctets = true;
 			break;
 		case 'o':
 			flags->offset = atoi(arg);
+			break;
+		case 'e':
+			flags->littleendian = true;
 			break;
 		case 'R':
 			if (strcmp(arg, "none") == 0)
@@ -204,7 +209,7 @@ int main(int argc, char* argv[])
 
 	argp_parse(&argp, argc, argv, 0, 0, &flags);
 
-	init_cols(&flags);
+	init_var_defaults(&flags);
 	
 	do_text_parse(&lines, (flags.files[0] == NULL ? true : false));
 
