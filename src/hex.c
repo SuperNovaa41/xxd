@@ -16,6 +16,8 @@ void init_flags(struct flags* flags)
 	flags->customcols = false;
 	flags->coloured = true;
 
+	flags->offset = 0;
+
 	flags->octets = 2;
 	flags->len = -1; // -1 means til EOF
 	flags->uppercase = false;
@@ -154,7 +156,7 @@ static void c_output(char** text, FILE* stream)
 void display_hex_chunk(hex_chunk_t* chunk, FILE* stream)
 {
 	if (!flags.postscript && !flags.c_style)
-		write_offset(chunk->line * flags.cols, stream);
+		write_offset((chunk->line * flags.cols) + flags.offset, stream);
 
 	if (flags.c_style)
 		c_output(&(chunk->hex), stream);

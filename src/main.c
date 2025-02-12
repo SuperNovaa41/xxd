@@ -22,6 +22,7 @@ static struct argp_option options[] = {
 	{0, 'i', 0, 0, "output in C include file style.", 0},
 	{0, 'C', 0, 0, "capitalize variable names in C include file style (-i).", 0},
 	{0, 'n', "name", 0, "set the variable name used in C include output (-i).", 0},
+	{0, 'o', "off", 0, "add <off> to the displayed file position.", 0},
 	{0}
 };
 
@@ -41,6 +42,9 @@ static error_t parse_opt(int key, char* arg, struct argp_state* state)
 			break;
 		case 'g':
 			flags->octets = atoi(arg);
+			break;
+		case 'o':
+			flags->offset = atoi(arg);
 			break;
 		case 'R':
 			if (strcmp(arg, "none") == 0)

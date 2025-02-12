@@ -26,6 +26,8 @@ struct flags {
 	
 	uint cols; // choose the amount of columns to display (default 16) // done
 	bool customcols;
+
+	uint offset;
 	
 	uint octets; // number of octets per line (default 2) // done
 	int len; // max len to stop at //done 
