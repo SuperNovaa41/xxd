@@ -30,7 +30,7 @@ struct flags {
 	bool littleendian;
 
 	uint offset;
-	uint seek;
+	int seek;
 	
 	uint octets; // number of octets per line (default 2) // done
 	bool customoctets;	

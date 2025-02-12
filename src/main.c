@@ -134,7 +134,8 @@ static void do_text_parse(hex_chunk_t** lines, bool interactive)
 			fprintf(stderr, "xxd: Sorry, cannot seek.\n");
 			exit(EXIT_FAILURE);
 		}
-		seek = (strlen(file_content) - flags.seek);
+		seek = (strlen(file_content) - (flags.seek * -1));
+		flags.offset += seek;
 	}
 
 	filesize = (flags.len == -1) ? strlen(file_content + seek) : flags.len;
